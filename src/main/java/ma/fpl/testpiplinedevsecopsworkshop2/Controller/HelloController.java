@@ -16,4 +16,9 @@ public class HelloController {
         }
         return message2;
     }
+    @GetMapping("/bug")
+    public String bug() {
+        String text = null;
+        return text.toUpperCase(); // NullPointerException possible
+    }
 }
