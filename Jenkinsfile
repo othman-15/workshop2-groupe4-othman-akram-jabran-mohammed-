@@ -25,7 +25,7 @@ pipeline {
                 scannerHome = tool 'Sonar-Scanner-4'
             }
             steps {
-                withSonarQubeEnv('SonarServer') {
+                withSonarQubeEnv('SonarQube_ser') {
                     sh """
                         ${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=springboot-app \
