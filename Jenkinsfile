@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/othman-15/test-pip.git'
+                git branch: 'main', url: 'https://github.com/othman-15/workshop2-groupe4-othman-akram-jabran-mohammed-.git'
             }
         }
 
