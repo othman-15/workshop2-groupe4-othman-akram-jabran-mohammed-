@@ -19,6 +19,44 @@ pipeline {
                 sh 'mvn clean verify'
             }
         }
+           /* =========================
+           3️⃣ OWASP Dependency-Check
+           ========================= */
+        stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck additionalArguments: '''
+                    --scan .
+                    --format XML
+                    --out dependency-check-report
+                ''', odcInstallation: 'OWASP-Dependency-Check'
+            }
+        }
+
+        /* =========================
+           4️⃣ Publication du rapport OWASP
+           ========================= */
+        stage('Publish OWASP Report') {
+            steps {
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+
+        /* =========================
+           5️⃣ Security Gate – Blocage si CRITICAL
+           ========================= */
+        stage('Dependency Security Gate') {
+            steps {
+                script {
+                    def report = readFile 'dependency-check-report/dependency-check-report.xml'
+                    if (report.contains('<severity>CRITICAL</severity>')) {
+                        error '❌ Build FAILED : CRITICAL vulnerabilities detected!'
+                    } else {
+                        echo '✅ No CRITICAL vulnerabilities found'
+                    }
+                }
+            }
+        }
+
 
         stage('SonarQube Analysis') {
             environment {
@@ -50,15 +88,6 @@ pipeline {
                 }
             }
         }
-        stage('Dependency Check (SCA)') {
-            steps {
-                sh 'mvn org.owasp:dependency-check-maven:check'
-            }
-            post {
-                always {
-                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                }
-            }
-        }
+       
     }
 }
