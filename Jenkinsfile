@@ -50,5 +50,15 @@ pipeline {
                 }
             }
         }
+        stage('Dependency Check (SCA)') {
+            steps {
+                sh 'mvn org.owasp:dependency-check-maven:check'
+            }
+            post {
+                always {
+                    dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                }
+            }
+        }
     }
 }
